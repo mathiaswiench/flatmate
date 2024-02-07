@@ -43,16 +43,19 @@ const Calculate = () => {
   };
 
   const callBackend = async () => {
-    const response = await fetch('flatmate-production.up.railway.app/calc', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        total_days: totalDays,
-        flatmates: flatmates.current,
-      }),
-    });
+    const response = await fetch(
+      'https://flatmate-production.up.railway.app/calc',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          total_days: totalDays,
+          flatmates: flatmates.current,
+        }),
+      }
+    );
     if (response.ok) {
       response.json().then((data: any) => {
         if (data) {
