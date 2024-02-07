@@ -43,7 +43,7 @@ const Calculate = () => {
   };
 
   const callBackend = async () => {
-    const response = await fetch('http://localhost:8080/calc', {
+    const response = await fetch('flatmate-production.up.railway.app/calc', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
