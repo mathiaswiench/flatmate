@@ -54,11 +54,15 @@ const Calculate = () => {
       }),
     });
     if (response.ok) {
-      response.json().then((data) => {
-        console.log(data);
-        setDailyCostPerPerson(data['daily_cost_per_person']);
-        setTotalExpenditure(data['total_expenditure']);
-        data['settlements'].map((settlement) => settlements.push(settlement));
+      response.json().then((data: any) => {
+        if (data) {
+          console.log(data);
+          setDailyCostPerPerson(data['daily_cost_per_person']);
+          setTotalExpenditure(data['total_expenditure']);
+          let settlements: string[] = [];
+          settlements = data['settlements'];
+          settlements.map((settlement: any) => settlements.push(settlement));
+        }
       });
     }
   };
