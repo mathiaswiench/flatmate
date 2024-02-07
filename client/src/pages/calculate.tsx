@@ -14,6 +14,7 @@ const Calculate = () => {
   console.log(totalDays);
 
   const [name, setName] = useState('');
+  const formular = useRef(null);
   const [expenditure, setExpenditure] = useState('');
   const [daysAbsent, setDaysAbsent] = useState('');
   const [dailyCostPerPerson, setDailyCostPerPerson] = useState('');
@@ -30,8 +31,10 @@ const Calculate = () => {
       absent_days: daysAbsent,
     });
     notify(NotificationAction.SUCCESS, 'Flatmate added');
-
-    document.getElementById('flatmate_form').reset();
+    if (formular) {
+      const form = formular.current as HTMLFormElement;
+      form.reset();
+    }
   };
 
   const openModal = () => {
@@ -71,7 +74,7 @@ const Calculate = () => {
   return (
     <div className='px-20'>
       <Heading1>Flatmate 3.0</Heading1>
-      <form id='flatmate_form'>
+      <form id='flatmate_form' ref={formular}>
         {/* Number of Days */}
 
         {/* Flatmates */}
