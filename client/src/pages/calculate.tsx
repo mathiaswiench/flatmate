@@ -14,7 +14,7 @@ const Calculate = () => {
   console.log(totalDays);
 
   const [name, setName] = useState('');
-  const formular = useRef(null);
+  const formular = useRef<HTMLFormElement>(null);
   const [expenditure, setExpenditure] = useState('');
   const [daysAbsent, setDaysAbsent] = useState('');
   const [dailyCostPerPerson, setDailyCostPerPerson] = useState('');
@@ -31,7 +31,7 @@ const Calculate = () => {
       absent_days: daysAbsent,
     });
     notify(NotificationAction.SUCCESS, 'Flatmate added');
-    if (formular) {
+    if (formular.current) {
       const form = formular.current as HTMLFormElement;
       form.reset();
     }
