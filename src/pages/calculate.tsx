@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react';
 import { useRef, useState } from 'react';
 import { Heading1, Heading4 } from '../components/general/Heading';
-import Modal from '@/components/Modal/Modal';
-import router from 'next/router';
+import Modal from '../components/Modal/Modal';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { totalDaysState } from '@/state/atoms/TotalDaysState';
-import { useNotificationContext } from '../contexts/NotificationProvider';
-import NotificationAction from '../reducer/notificationAction';
-import Button from '@/components/general/Button';
+import { totalDaysState } from '../state/atoms/TotalDaysState';
+import Button from '../components/general/Button';
+import Link from 'next/link';
+import { number } from 'prop-types';
 
 const Calculate = () => {
   const [totalDays, setTotalDays] = useRecoilState(totalDaysState);
-  console.log(totalDays);
 
   const [name, setName] = useState('');
   const formular = useRef<HTMLFormElement>(null);
@@ -19,8 +17,7 @@ const Calculate = () => {
   const [daysAbsent, setDaysAbsent] = useState('');
   const [dailyCostPerPerson, setDailyCostPerPerson] = useState('');
   const [totalExpenditure, setTotalExpenditure] = useState('');
-  const [settlements, setSettlements] = useState([]);
-  const { notify } = useNotificationContext();
+  const [debts, setDebts] = useState<string[]>([]);
 
   const flatmates = useRef(new Array());
 
@@ -30,7 +27,6 @@ const Calculate = () => {
       expenditure: expenditure,
       absent_days: daysAbsent,
     });
-    notify(NotificationAction.SUCCESS, 'Flatmate added');
     if (formular.current) {
       const form = formular.current as HTMLFormElement;
       form.reset();
@@ -44,7 +40,7 @@ const Calculate = () => {
 
   const callBackend = async () => {
     const response = await fetch(
-      'https://flatmate-production.up.railway.app/calc',
+      'https://blueberry-icecream-72593-21698fe61654.herokuapp.com/calc',
       {
         method: 'POST',
         headers: {
@@ -59,23 +55,18 @@ const Calculate = () => {
     if (response.ok) {
       response.json().then((data: any) => {
         if (data) {
-          console.log(data);
           setDailyCostPerPerson(data['daily_cost_per_person']);
           setTotalExpenditure(data['total_expenditure']);
-          let settlements: string[] = [];
-          settlements = data['settlements'];
-          settlements.map((settlement: any) => settlements.push(settlement));
+          setDebts((currentDebts) => [...currentDebts, ...data['settlements']]);
         }
       });
     }
   };
-  const jumpBack = () => {
-    router.push('/');
-  };
+
   const print = () => {
-    console.log(dailyCostPerPerson);
-    console.log(totalExpenditure);
-    console.log(settlements);
+    console.log(totalDays);
+    console.log(name);
+    // console.log(debts);
   };
 
   return (
@@ -117,7 +108,9 @@ const Calculate = () => {
         </div>
       </form>
       <div className='flex gap-4 mt-5'>
-        <Button onClick={() => jumpBack()}>Back</Button>
+        <Link href='/'>
+          <Button>Back</Button>
+        </Link>{' '}
         <Button onClick={() => addFlatmate()}>Add</Button>
         <Button
           onClick={() => {
@@ -127,17 +120,17 @@ const Calculate = () => {
         >
           Submit
         </Button>
-
         <Modal>
-          <div></div>
-          <p>Total Expenditure: {totalExpenditure} €</p>
-          <p>Daily Cost per Person: {dailyCostPerPerson} €</p>
-          <br />
-          <p className='font-semibold'>Who owes whom?</p>
           <div>
-            {settlements.map((settlement) => (
-              <p key={settlements.indexOf(settlement)}>{settlement} €</p>
-            ))}
+            <p>Total Expenditure: {totalExpenditure} €</p>
+            <p>Daily Cost per Person: {dailyCostPerPerson} €</p>
+            <br />
+            <p className='font-semibold'>Who owes whom?</p>
+            <div>
+              {debts.map((debt) => (
+                <p key={debts.indexOf(debt)}>{debt} €</p>
+              ))}
+            </div>
           </div>
         </Modal>
       </div>
